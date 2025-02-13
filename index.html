@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Lanzamiento de dado</h1>
+    <button onclick="lanzarActualizar()">Lanzar</button>
+    <button onclick="verResultados()">Resultados</button>
+    <table>
+        <thead>
+            <tr>Dado1</tr>
+            <tr>Dado2</tr>
+            <tr>Suma</tr> 
+        </thead>
+        <tbody id="tabla">
+            <tr> 
+                <td ><img id="dado1" src="./img/dado1.jpg"></td>
+                <td ><img id="dado2" src="./img/dado1.jpg"></td>
+                <td id="Suma">3</td>
+            </tr>
+
+        </tbody>
+    </table>
+    <p>todas las sumas:</p>
+    <p id="sumas"></p>
+
+    <script>
+        //funcion lanzar dado
+        function lanzarDados(){
+            return(Math.floor(Math.random()*6) + 1);
+        }
+        //funcion lanzar dados y actualizar tabla
+        async function lanzarActualizar(){
+            console.log("funcion lanzaractual");
+            //calculo valores
+            let dado1 = lanzarDados();
+            console.log(dado1);
+            let dado2 = lanzarDados();
+            console.log(dado2);
+            let Suma = dado1 + dado2;
+            //actualizo la tabla
+            /*let columDado1 = document.getElementById("dado1");
+            let columDado2 = document.getElementById("dado2");
+            let columSuma = document.getElementById("Suma");
+
+            columDado1.src = obtenerNombreImg(dado1);
+            console.log(obtenerNombreImg(dado1));
+            columDado2.src = obtenerNombreImg(dado2);
+            columSuma.innerHTML = Suma;*/
+                    var tbody = document.getElementById("tabla");
+                    var hilera = document.createElement("tr");
+                    var celda = document.createElement("td");
+                    var textoCelda = document.createTextNode(dado1);
+                    var celda2 = document.createElement("td");
+                    var textoCelda2 = document.createTextNode(dado2);
+                    var celda3 = document.createElement("td");
+                    var textoCelda3 = document.createTextNode(Suma);
+
+                    celda.appendChild(textoCelda);
+                    celda2.appendChild(textoCelda2);
+                    celda3.appendChild(textoCelda3);
+                    hilera.appendChild(celda);
+                    hilera.appendChild(celda2);
+                    hilera.appendChild(celda3);
+                    tbody.appendChild(hilera);
+            //Subo a la API los resultados
+            await fetch("https://67ac82963f5a4e1477dacf5d.mockapi.io/libros/dados",{
+                method: 'POST', 
+                headers: {'Content-Type':'application/json'},
+                body:JSON.stringify({dado1:dado1, dado2:dado2, Suma:Suma})
+            });
+            
+            
+        }
+
+        function obtenerNombreImg(valor){
+            return "./img/dado" + valor + ".jpg";
+        }
+        async function verResultados(){
+            console.log("inicio de la peticion");
+            let respuesta = await fetch("https://67ac82963f5a4e1477dacf5d.mockapi.io/libros/dados");
+            let datos = await respuesta.json();
+            console.log("datos obtenidos", datos);
+            let texto = "";
+            datos.forEach(element => {
+                texto = texto + element.Suma + ",";
+            });
+            document.getElementById("sumas").innerHTML = texto;
+        }
+        
+    </script>
+</body>
+</html>
